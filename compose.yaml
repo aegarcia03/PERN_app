@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  frontend:
+    container_name: frontend
+    image: frontend
+    build:
+      context: ./frontend
+      dockerfile: frontend.dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
+    restart: always
+    depends_on:
+      - backend
+  backend:
+    container_name: backend
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+    ports:
+      - 4000:4000
+    environment:
+      - DATABASE_URL=postgresql://carry_bee:buzzingaround@db:5432/carry_bee?schema=public
+  db:
+    container_name: db
+    image: postgres:15
+    restart: always
+    
+    environment:
+      POSTGRES_USER: carry_bee
+      POSTGRES_PASSWORD: buzzingaround
+      POSTGRES_DB: carry_bee
+    ports:
+    - 5432:5432
+    volumes: #persistance
+    - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata: {}
+
